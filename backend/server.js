@@ -9,10 +9,22 @@ import geminiResponse from './gemini.js'
 
 dotenv.config()
 const app = express()
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://vertual-assistant-frontend.onrender.com"
+];
+
 app.use(cors({
-    origin:"https://vertual-assistant-frontend.onrender.com",
-    credentials: true
-}))
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+}));
 
 const port = process.env.PORT || 5000 
 
