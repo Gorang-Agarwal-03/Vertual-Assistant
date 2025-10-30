@@ -134,7 +134,7 @@ const Home = () => {
             
           }
         }
-      },500)
+      },1000)
 
       const startRecognize = ()=>{
         if(!isSpeakingRef.current && !isrecognizingRef.current){
@@ -168,28 +168,35 @@ const Home = () => {
                 }   
               }
             }
-          },500)
+          },1000)
         }
       };
 
-      recognition.onerror = (event)=>{
-        console.warn("Recognition error: ",event.error);
-        isrecognizingRef.current=false;
-        setListening(false);
-        if(event.error !== "aborted" && isMounted && !isSpeakingRef.current){
-          setTimeout(()=>{
-            if(isMounted){
-              try {
-                recognition.start()
-              } catch (e) {
-                if(e.name !== "InvalidStateError"){
-                  console.log(e) 
-                }
-              }
-            }
-          },500);
+      recognition.onerror = (event) => {
+  console.warn("Recognition error: ", event.error);
+  isrecognizingRef.current = false;
+  setListening(false);
+
+  // ⚠️ Do not restart if it's a normal abort (like after recognition.stop())
+  if (event.error === "aborted") {
+    console.log("Recognition stopped intentionally — no restart needed.");
+    return;
+  }
+
+  // Restart only if it's a genuine error (network, no-speech, etc.)
+  if (isMounted && !isSpeakingRef.current) {
+    setTimeout(() => {
+      if (isMounted) {
+        try {
+          recognition.start();
+        } catch (e) {
+          if (e.name !== "InvalidStateError") console.log(e);
         }
-      };
+      }
+    }, 1000);
+  }
+};
+
 
       recognition.onresult= async(e)=>{
         const transcript = e.results[e.results.length-1][0].transcript.trim()
