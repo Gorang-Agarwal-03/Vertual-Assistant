@@ -3,7 +3,7 @@ import bg from '../assets/authBg.png'
 import { LuEye ,LuEyeClosed} from "react-icons/lu";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios"
-import { userDataContext } from '../context/userContext';
+import { userDataContext } from '../context/UserContext';
 const SignUp = () => {
     const[showPassword,setShowPassword] = useState(false)
     const navigate = useNavigate()
